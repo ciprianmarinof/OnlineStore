@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -32,13 +31,19 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable());
         http.authorizeHttpRequests(auth -> {
             auth
-                    .requestMatchers(HttpMethod.POST, "/api/role").hasAuthority("ADMIN")
+                    .requestMatchers("/", "/index", "/login","/register/user","api/register/user", "/css/**", "/js/**").permitAll() //frontend
                     .requestMatchers("/api/register").permitAll()
                     .requestMatchers("/api/signin").permitAll()
-                    .requestMatchers("/user_role/role").permitAll()
+                    .requestMatchers("/user_role/role").permitAll() // change to has authority ADMIN after database reset.
                     .requestMatchers(HttpMethod.GET, "/product").hasAnyAuthority("ADMIN", "USER")
                     .requestMatchers(HttpMethod.POST, "/product").hasAuthority("ADMIN")
-                    .requestMatchers(HttpMethod.POST, "/categories").hasAnyAuthority("ADMIN", "USER")
+                    .requestMatchers(HttpMethod.PATCH, "/product/").hasAuthority("ADMIN")
+                    .requestMatchers(HttpMethod.DELETE, "product").hasAuthority("ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/categories").hasAuthority("ADMIN")
+                    .requestMatchers(HttpMethod.DELETE,"/categories").hasAuthority("ADMIN")
+                    .requestMatchers(HttpMethod.PUT, "/categories/").hasAuthority("ADMIN")
+                    .requestMatchers(HttpMethod.GET, "/users").hasAuthority("ADMIN")
+                    .requestMatchers(HttpMethod.GET,"/categories").authenticated()
                     .anyRequest().authenticated();
         }).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
@@ -53,6 +58,8 @@ public class SecurityConfig {
     {
         return new BCryptPasswordEncoder();
     }
+
+
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {

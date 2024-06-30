@@ -28,8 +28,6 @@ public class AuthController {
     }
 
 
-    // do something about this. register admin should be different from register user
-    // for frontend - different pages for register - administration panel sign in??
     @PostMapping("/api/register")
     public ResponseEntity<Void> registerAdmin(@RequestBody @Valid AddUserRequest userRequest) throws RoleNotFoundException {
         authService.getUserByEmail(userRequest.getEmail());
@@ -37,6 +35,13 @@ public class AuthController {
 
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/api/register/user")
+    public ResponseEntity<String> registerUser(@RequestBody @Valid AddUserRequest userRequest) throws RoleNotFoundException {
+        authService.registerUser(userRequest);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
     }
 
     @PostMapping("/api/signin")

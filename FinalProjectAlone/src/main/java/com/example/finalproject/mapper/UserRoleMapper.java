@@ -3,6 +3,7 @@ package com.example.finalproject.mapper;
 import com.example.finalproject.dto.request.role.AddRoleRequest;
 import com.example.finalproject.dto.request.user.AddUserRequest;
 import com.example.finalproject.dto.response.user.SignInResponse;
+import com.example.finalproject.dto.response.user.UserResponse;
 import com.example.finalproject.entity.Role;
 import com.example.finalproject.entity.User;
 import com.example.finalproject.service.security.UserDetailsImpl;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class UserRoleMapper {
@@ -64,5 +66,15 @@ public class UserRoleMapper {
         return response;
     }
 
+    public UserResponse toUserResponse(User user){
+
+        UserResponse response = new UserResponse();
+
+        response.setUsername(user.getUsername());
+        response.setEmail(user.getEmail());
+        response.setRoles(user.getRoles().stream().map(Role::getName).collect(Collectors.toList()));
+
+        return response;
+    }
 }
 

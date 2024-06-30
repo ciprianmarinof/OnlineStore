@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Register</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .banner {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .form-container {
+            display: inline-block;
+            text-align: left;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .form-container div {
+            margin-bottom: 15px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            color: white;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .message {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+<div class="banner">
+    <h1>Register</h1>
+</div>
+<div class="container">
+    <div class="form-container">
+        <form id="registerForm">
+            <div>
+                <label>Username:</label>
+                <input type="text" id="username" required/>
+            </div>
+            <div>
+                <label>Email:</label>
+                <input type="email" id="email" required/>
+            </div>
+            <div>
+                <label>Password:</label>
+                <input type="password" id="password" required/>
+            </div>
+            <div>
+                <label>Role:</label>
+                <select id="role" required>
+                    <option value="">Select a role</option>
+                    <option value="USER">USER</option>
+                    <option value="ADMIN">ADMIN</option>
+                </select>
+            </div>
+            <div>
+                <button type="submit" class="button">Register</button>
+            </div>
+        </form>
+    </div>
+    <div class="message" id="message"></div>
+</div>
+<script>
+    document.getElementById("registerForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const username = document.getElementById("username").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const role = document.getElementById("role").value;
+
+        const data = {
+            username: username,
+            email: email,
+            password: password,
+            rolesName: [role]
+        };
+
+        fetch("/api/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (response.status === 201) {
+                    document.getElementById("message").innerText = "Registration successful. Please login.";
+                } else {
+                    response.json().then(data => {
+                        document.getElementById("message").innerText = data.message || "Registration failed.";
+                    });
+                }
+            })
+            .catch(error => {
+                document.getElementById("message").innerText = "An error occurred: " + error.message;
+            });
+    });
+</script>
+</body>
+</html>

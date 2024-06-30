@@ -13,7 +13,6 @@ public class UserResponse {
 
     private String username;
     private String email;
-    private List<String> products;
     private List<String> roles;
 
 }

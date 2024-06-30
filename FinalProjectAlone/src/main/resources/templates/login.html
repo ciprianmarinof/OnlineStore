@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .banner {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .form-container {
+            display: inline-block;
+            text-align: left;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .form-container div {
+            margin-bottom: 15px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            color: white;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .message {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<div class="banner">
+    <h1>Login</h1>
+</div>
+<div class="container">
+    <div class="form-container">
+        <form id="loginForm">
+            <div>
+                <label>Username:</label>
+                <input type="text" id="username" required/>
+            </div>
+            <div>
+                <label>Password:</label>
+                <input type="password" id="password" required/>
+            </div>
+            <div>
+                <button type="submit" class="button">Login</button>
+            </div>
+        </form>
+    </div>
+    <div class="message" id="message"></div>
+</div>
+<script>
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        const data = {
+            username: username,
+            password: password
+        };
+
+        fetch("/api/signin", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.token) {
+                    localStorage.setItem("token", data.token);
+                    document.getElementById("message").innerText = "Login successful. Redirecting...";
+                    window.location.href = "/categories";
+                } else {
+                    document.getElementById("message").innerText = "Login failed.";
+                }
+            })
+            .catch(error => {
+                document.getElementById("message").innerText = "An error occurred: " + error.message;
+            });
+    });
+</script>
+</body>
+</html>
